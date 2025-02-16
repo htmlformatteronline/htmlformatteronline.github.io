@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Formatter</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Prism.js for Syntax Highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .output-box {
+            background: #2d2d2d;
+            padding: 15px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            min-height: 100px;
+            font-family: monospace;
+            border: 1px solid #444;
+            overflow-x: auto;
+            color: #fff;
+        }
+
+        .dark-mode {
+            background-color: #333;
+            color: #fff;
+        }
+
+        .dark-mode .output-box {
+            background: #2d2d2d;
+            color: #fff;
+            border-color: #555;
+        }
+
+        textarea {
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container mt-5">
+        <h2 class="text-center">HTML Formatter</h2>
+
+        <!-- Dark Mode Toggle -->
+        <div class="text-end">
+            <button id="darkModeToggle" class="btn btn-outline-secondary">
+                <span class="material-icons">dark_mode</span>
+            </button>
+        </div>
+
+        <!-- HTML Input -->
+        <label for="htmlInput" class="form-label">Paste your HTML here:</label>
+        <textarea id="htmlInput" class="form-control" rows="6" placeholder="Paste your HTML code here..."></textarea>
+
+        <!-- Buttons -->
+        <div class="d-flex justify-content-center my-3">
+            <button class="btn btn-primary me-2" onclick="formatHTML()">Format HTML</button>
+            <button class="btn btn-warning me-2" onclick="minifyHTML()">Minify HTML</button>
+            <button class="btn btn-danger me-2" onclick="clearHTML()">Clear</button>
+        </div>
+
+        <!-- Output -->
+        <div class="output-box">
+            <label class="form-label">Formatted HTML:</label>
+            <pre><code id="htmlOutput" class="language-markup"></code></pre>
+        </div>
+
+        <!-- Copy Button -->
+        <div class="text-end">
+            <button class="btn btn-success" onclick="copyToClipboard()">
+                <span class="material-icons">content_copy</span> Copy
+            </button>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- JS Beautify Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.0/beautify-html.min.js"></script>
+
+    <!-- Prism.js for Syntax Highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+
+    <script>
+        function formatHTML() {
+            let input = document.getElementById("htmlInput").value;
+            if (input.trim() === "") {
+                document.getElementById("htmlOutput").textContent = "❌ No HTML code provided!";
+                return;
+            }
+
+            try {
+                let formattedHTML = html_beautify(input, { indent_size: 4 });
+                document.getElementById("htmlOutput").innerHTML = Prism.highlight(formattedHTML, Prism.languages.markup, 'markup');
+            } catch (e) {
+                document.getElementById("htmlOutput").textContent = "❌ Error formatting HTML!";
+            }
+        }
+
+        function minifyHTML() {
+            let input = document.getElementById("htmlInput").value;
+            if (input.trim() === "") {
+                document.getElementById("htmlOutput").textContent = "❌ No HTML code provided!";
+                return;
+            }
+
+            try {
+                let minifiedHTML = input.replace(/\s+/g, ' ').trim();
+                document.getElementById("htmlOutput").innerHTML = Prism.highlight(minifiedHTML, Prism.languages.markup, 'markup');
+            } catch (e) {
+                document.getElementById("htmlOutput").textContent = "❌ Error minifying HTML!";
+            }
+        }
+
+        function clearHTML() {
+            document.getElementById("htmlInput").value = "";
+            document.getElementById("htmlOutput").textContent = "";
+        }
+
+        function copyToClipboard() {
+            let output = document.getElementById("htmlOutput").textContent;
+            if (output.trim() !== "" && output !== "❌ No HTML code provided!" && output !== "❌ Error formatting HTML!") {
+                navigator.clipboard.writeText(output);
+                alert("Copied to clipboard!");
+            }
+        }
+
+        // Dark Mode Toggle
+        document.getElementById("darkModeToggle").addEventListener("click", function () {
+            document.body.classList.toggle("dark-mode");
+        });
+    </script>
+
+</body>
+</html>
